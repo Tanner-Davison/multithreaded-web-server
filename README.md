@@ -41,7 +41,6 @@ int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 ```
 
 **All Server Domain(s)** (aka: Address Families):
-
 _what kind of addresses the socket can communicate with_
 
 - `AF_INET`: IPv4 Internet protocols
