@@ -1,6 +1,7 @@
 # IPv4 TCP Server Development Guide
 
 ## Table of Contents
+
 - [Introduction](#introduction)
 - [Core Concepts](#core-concepts)
 - [Socket Programming Fundamentals](#socket-programming-fundamentals)
@@ -19,6 +20,7 @@ This guide explains how to build a robust IPv4 TCP server in C++. It covers the 
 ### What is a TCP Server?
 
 A TCP server is a program that:
+
 1. **Listens** on a specific port for incoming connections
 2. **Accepts** client connections
 3. **Handles** data exchange with clients
@@ -96,6 +98,7 @@ server_addr.sin_port = htons(8080);         // Port in network byte order
 ### Step-by-Step Explanation
 
 #### 1. **Create Socket**
+
 ```cpp
 int server_fd = socket(AF_INET, SOCK_STREAM, 0);
 if (server_fd < 0) {
@@ -103,11 +106,13 @@ if (server_fd < 0) {
     exit(EXIT_FAILURE);
 }
 ```
+
 - Creates a socket file descriptor
 - Returns -1 on failure
 - The socket is not yet associated with any address
 
 #### 2. **Bind to Address**
+
 ```cpp
 struct sockaddr_in address;
 address.sin_family = AF_INET;
@@ -119,39 +124,45 @@ if (bind(server_fd, (struct sockaddr*)&address, sizeof(address)) < 0) {
     exit(EXIT_FAILURE);
 }
 ```
+
 - Associates socket with specific IP:port
 - `INADDR_ANY` (0.0.0.0) means "accept on all interfaces"
 - Can fail if port is already in use or privileged (<1024 without root)
 
 #### 3. **Listen for Connections**
+
 ```cpp
 if (listen(server_fd, BACKLOG) < 0) {
     perror("listen failed");
     exit(EXIT_FAILURE);
 }
 ```
+
 - Marks socket as passive (ready to accept connections)
 - `BACKLOG`: Maximum pending connections queue (typically 5-128)
 - Connections beyond backlog are refused
 
 #### 4. **Accept Connections**
+
 ```cpp
 struct sockaddr_in client_addr;
 socklen_t client_len = sizeof(client_addr);
 
-int client_fd = accept(server_fd, 
-                      (struct sockaddr*)&client_addr, 
+int client_fd = accept(server_fd,
+                      (struct sockaddr*)&client_addr,
                       &client_len);
 if (client_fd < 0) {
     perror("accept failed");
     // Handle error but keep server running
 }
 ```
+
 - **Blocks** until a client connects
 - Returns new socket for that specific client
 - Original `server_fd` continues listening
 
 #### 5. **Handle Client Communication**
+
 ```cpp
 char buffer[1024] = {0};
 ssize_t bytes_read = read(client_fd, buffer, sizeof(buffer));
@@ -163,6 +174,7 @@ if (bytes_read > 0) {
 ```
 
 #### 6. **Close Connection**
+
 ```cpp
 close(client_fd);  // Close client socket
 // Server socket stays open for new connections
@@ -197,7 +209,7 @@ while (running) {
     struct sockaddr_in client_addr;
     socklen_t len = sizeof(client_addr);
     int client_fd = accept(server_fd, (struct sockaddr*)&client_addr, &len);
-    
+
     if (client_fd >= 0) {
         handleClient(client_fd, client_addr);
         close(client_fd);
@@ -227,7 +239,7 @@ private:
 public:
     Server(int port, int backlog = 10);
     ~Server();
-    
+
     bool start();    // Initialize and bind
     void run();      // Main accept loop
     void stop();     // Graceful shutdown
@@ -237,6 +249,7 @@ public:
 ### Why This Design?
 
 **Encapsulation**: Socket management is hidden inside the class. Users only need:
+
 ```cpp
 Server server(8080);
 server.start();
@@ -259,6 +272,7 @@ server.run();               // 3. Accept loop (blocks here)
 ```
 
 Inside `start()`:
+
 ```cpp
 bool Server::start() {
     if (!createSocket()) return false;   // socket()
@@ -270,18 +284,19 @@ bool Server::start() {
 ```
 
 Inside `run()`:
+
 ```cpp
 void Server::run() {
     while (m_running) {
         sockaddr_in client_addr;
         socklen_t len = sizeof(client_addr);
-        
-        int client_fd = accept(m_serverSocket, 
-                              (struct sockaddr*)&client_addr, 
+
+        int client_fd = accept(m_serverSocket,
+                              (struct sockaddr*)&client_addr,
                               &len);
-        
+
         if (client_fd < 0) continue; // Error handling
-        
+
         handleClient(client_fd, client_addr); // Process request
         close(client_fd);                      // Cleanup
     }
@@ -304,27 +319,28 @@ void Server::run() {
 bool Server::createSocket() {
     m_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (m_serverSocket < 0) return false;
-    
+
     // Allow immediate reuse of address
     int opt = 1;
-    if (setsockopt(m_serverSocket, SOL_SOCKET, SO_REUSEADDR, 
+    if (setsockopt(m_serverSocket, SOL_SOCKET, SO_REUSEADDR,
                    &opt, sizeof(opt)) < 0) {
         perror("setsockopt SO_REUSEADDR");
         return false;
     }
-    
+
     return true;
 }
 ```
 
 **When to Use Each:**
 
-| Option | Purpose | Use Case |
-|--------|---------|----------|
-| `SO_REUSEADDR` | Reuse address in TIME_WAIT | Server restart without waiting |
+| Option         | Purpose                       | Use Case                        |
+| -------------- | ----------------------------- | ------------------------------- |
+| `SO_REUSEADDR` | Reuse address in TIME_WAIT    | Server restart without waiting  |
 | `SO_REUSEPORT` | Multiple sockets on same port | Load balancing across processes |
 
 **SO_REUSEPORT Example** (Linux 3.9+):
+
 ```cpp
 int opt = 1;
 setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
@@ -356,6 +372,7 @@ if (bind(server_fd, ...) < 0) {
 ```
 
 **Handle `accept()` errors gracefully:**
+
 ```cpp
 int client_fd = accept(server_fd, ...);
 if (client_fd < 0) {
@@ -376,29 +393,29 @@ Ports may be transiently unavailable. Your code should implement:
 bool Server::bindSocket() {
     const int MAX_RETRIES = 5;
     const int RETRY_DELAY_SEC = 2;
-    
+
     for (int attempt = 0; attempt < MAX_RETRIES; ++attempt) {
-        if (bind(m_serverSocket, 
+        if (bind(m_serverSocket,
                 (struct sockaddr*)&m_serverAddress,
                 sizeof(m_serverAddress)) == 0) {
-            
+
             // Get actual port (useful if port 0 was requested)
             socklen_t len = sizeof(m_serverAddress);
-            getsockname(m_serverSocket, 
-                       (struct sockaddr*)&m_serverAddress, 
+            getsockname(m_serverSocket,
+                       (struct sockaddr*)&m_serverAddress,
                        &len);
             m_actualPort = ntohs(m_serverAddress.sin_port);
             return true;
         }
-        
+
         if (attempt < MAX_RETRIES - 1) {
-            std::cerr << "Bind attempt " << (attempt + 1) 
-                     << " failed, retrying in " << RETRY_DELAY_SEC 
+            std::cerr << "Bind attempt " << (attempt + 1)
+                     << " failed, retrying in " << RETRY_DELAY_SEC
                      << "s...\n";
             sleep(RETRY_DELAY_SEC);
         }
     }
-    
+
     std::cerr << "Failed to bind after " << MAX_RETRIES << " attempts\n";
     return false;
 }
@@ -409,7 +426,7 @@ bool Server::bindSocket() {
 ```cpp
 Server::~Server() {
     stop();
-    
+
     if (m_serverSocket >= 0) {
         shutdown(m_serverSocket, SHUT_RDWR); // Stop ongoing I/O
         close(m_serverSocket);                // Release socket
@@ -419,6 +436,7 @@ Server::~Server() {
 ```
 
 **Why `shutdown()` before `close()`?**
+
 - `shutdown()`: Stops read/write operations immediately
 - `close()`: Decrements reference count, socket may linger
 
@@ -440,14 +458,14 @@ void signalHandler(int signum) {
 int main() {
     Server server(8080);
     g_server = &server;
-    
+
     // Register signal handlers
     signal(SIGINT, signalHandler);   // Ctrl+C
     signal(SIGTERM, signalHandler);  // kill command
-    
+
     server.start();
     server.run();
-    
+
     g_server = nullptr;
     return 0;
 }
@@ -458,12 +476,13 @@ int main() {
 Your server currently handles one client at a time (blocking). For production:
 
 **Option A: Thread-per-Connection**
+
 ```cpp
 void Server::run() {
     while (m_running) {
         int client_fd = accept(m_serverSocket, ...);
         if (client_fd < 0) continue;
-        
+
         // Create new thread for each client
         std::thread client_thread([this, client_fd, client_addr]() {
             handleClient(client_fd, client_addr);
@@ -478,6 +497,7 @@ void Server::run() {
 **Cons**: Thread overhead, scalability limited
 
 **Option B: Thread Pool**
+
 ```cpp
 #include <queue>
 #include <condition_variable>
@@ -488,7 +508,7 @@ class ThreadPool {
     std::mutex queue_mutex;
     std::condition_variable cv;
     bool stop = false;
-    
+
 public:
     ThreadPool(size_t threads) {
         for (size_t i = 0; i < threads; ++i) {
@@ -497,8 +517,8 @@ public:
                     std::function<void()> task;
                     {
                         std::unique_lock<std::mutex> lock(queue_mutex);
-                        cv.wait(lock, [this] { 
-                            return stop || !tasks.empty(); 
+                        cv.wait(lock, [this] {
+                            return stop || !tasks.empty();
                         });
                         if (stop && tasks.empty()) return;
                         task = std::move(tasks.front());
@@ -509,7 +529,7 @@ public:
             });
         }
     }
-    
+
     void enqueue(std::function<void()> task) {
         {
             std::unique_lock<std::mutex> lock(queue_mutex);
@@ -521,6 +541,7 @@ public:
 ```
 
 Usage:
+
 ```cpp
 ThreadPool pool(10); // 10 worker threads
 
@@ -528,7 +549,7 @@ void Server::run() {
     while (m_running) {
         int client_fd = accept(m_serverSocket, ...);
         if (client_fd < 0) continue;
-        
+
         pool.enqueue([this, client_fd, client_addr]() {
             handleClient(client_fd, client_addr);
             close(client_fd);
@@ -541,6 +562,7 @@ void Server::run() {
 **Cons**: More complex implementation
 
 **Option C: Non-blocking I/O with epoll/select**
+
 ```cpp
 #include <sys/epoll.h>
 
@@ -553,7 +575,7 @@ epoll_ctl(epoll_fd, EPOLL_CTL_ADD, m_serverSocket, &event);
 
 while (m_running) {
     int n = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
-    
+
     for (int i = 0; i < n; ++i) {
         if (events[i].data.fd == m_serverSocket) {
             // New connection
@@ -655,6 +677,7 @@ if (n < 0) {
 ## Quick Reference
 
 ### Essential Headers
+
 ```cpp
 #include <sys/socket.h>  // socket, bind, listen, accept
 #include <netinet/in.h>  // sockaddr_in, INADDR_ANY
@@ -666,16 +689,16 @@ if (n < 0) {
 
 ### Key Functions
 
-| Function | Purpose | Returns |
-|----------|---------|---------|
-| `socket()` | Create socket | File descriptor or -1 |
-| `bind()` | Associate socket with address | 0 or -1 |
-| `listen()` | Mark socket as passive | 0 or -1 |
-| `accept()` | Accept incoming connection | New socket FD or -1 |
-| `read()` | Receive data | Bytes read, 0 (EOF), or -1 |
-| `write()` | Send data | Bytes written or -1 |
-| `close()` | Close socket | 0 or -1 |
-| `shutdown()` | Stop I/O operations | 0 or -1 |
+| Function     | Purpose                       | Returns                    |
+| ------------ | ----------------------------- | -------------------------- |
+| `socket()`   | Create socket                 | File descriptor or -1      |
+| `bind()`     | Associate socket with address | 0 or -1                    |
+| `listen()`   | Mark socket as passive        | 0 or -1                    |
+| `accept()`   | Accept incoming connection    | New socket FD or -1        |
+| `read()`     | Receive data                  | Bytes read, 0 (EOF), or -1 |
+| `write()`    | Send data                     | Bytes written or -1        |
+| `close()`    | Close socket                  | 0 or -1                    |
+| `shutdown()` | Stop I/O operations           | 0 or -1                    |
 
 ### Socket Options
 
@@ -721,7 +744,7 @@ inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, sizeof(client_ip));
 // Get port
 int client_port = ntohs(client_addr.sin_port);
 
-std::cout << "Client connected from " << client_ip 
+std::cout << "Client connected from " << client_ip
           << ":" << client_port << "\n";
 ```
 
@@ -743,6 +766,7 @@ g++ -std=c++23 -Wall -Wextra -pthread -o server src/main.cpp src/Server.cpp -I i
 ## Debugging Tips
 
 ### 1. Test with netcat
+
 ```bash
 # Start your server
 ./server
@@ -753,6 +777,7 @@ nc localhost 8080
 ```
 
 ### 2. Check what's listening
+
 ```bash
 # See all listening sockets
 netstat -tuln | grep 8080
@@ -762,12 +787,14 @@ ss -tuln | grep 8080
 ```
 
 ### 3. Monitor connections
+
 ```bash
 # See established connections
 netstat -antp | grep 8080
 ```
 
 ### 4. Use strace
+
 ```bash
 # See all system calls
 strace ./server
@@ -777,6 +804,7 @@ strace -e socket,bind,listen,accept ./server
 ```
 
 ### 5. Check for port already in use
+
 ```bash
 # Find process using port 8080
 lsof -i :8080
@@ -828,4 +856,4 @@ Based on your code, here's what to implement or verify:
 
 ---
 
-*This documentation is based on your Server class implementation and current best practices as of 2026.*
+_This documentation is based on your Server class implementation and current best practices as of 2026._
