@@ -40,17 +40,18 @@ A **socket** is an endpoint for network communication. Think of it as a "phone n
 int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 ```
 
-**All Server Domain(s)** (aka: Address Families):
-_what kind of addresses the socket can communicate with_
+### All Server Domain(s) (aka: Address Families):
+
+what kind of **addresses** the socket can communicate with:
 
 - `AF_INET`: IPv4 Internet protocols
 - `AF_INET6 IPv6`: IPv6 Internet protocols
 - `AF_UNIX/AF_LOCALLocal`: Local communication (same machine)
 - `AF_PACKETLow`: low-level packet interface
 
-**Types (aka: Socket Types):**
+### Types (aka: Socket Types):
 
-_Specifies the communication semantics:_
+specifies the **communication** semantics;
 
 - `SOCK_STREAM`: _TCP_- reliable, connection-based, ordered byte stream
 - `SOCK_DGRAM`: _UDP_ - unreliable, connectionless datagrams
