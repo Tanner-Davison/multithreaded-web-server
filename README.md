@@ -40,7 +40,7 @@ A **socket** is an endpoint for network communication. Think of it as a "phone n
 int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 ```
 
-### All Server Domain(s) # ( Address Families )
+### All Server Domain(s) (address-families)
 
 what kind of **addresses** the socket can communicate with:
 
@@ -49,7 +49,7 @@ what kind of **addresses** the socket can communicate with:
 - `AF_UNIX/AF_LOCALLocal`: Local communication (same machine)
 - `AF_PACKETLow`: low-level packet interface
 
-### Types (aka: Socket Types):
+### Types (socket types):
 
 specifies the **communication** semantics;
 
