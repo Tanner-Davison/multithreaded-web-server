@@ -1,5 +1,5 @@
 # IPv4 TCP Server Development Guide
-## Written and developed by: Tanner Davison
+### written and developed by: Tanner Davison
 
 ## Table of Contents
 
