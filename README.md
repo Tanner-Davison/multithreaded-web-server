@@ -42,6 +42,19 @@ int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 - `SOCK_STREAM`: TCP (reliable, connection-oriented)
 - `0`: Default protocol (TCP for SOCK_STREAM)
 
+**other Domain (Address Families)**
+
+- `AF_INET6 IPv6`: Internet protocols
+- `AF_UNIX/AF_LOCALLocal`: communication (same machine)
+- `AF_PACKETLow`: level packet interface
+
+**other Types (Socket Types)**
+
+- `SOCK_STREAM`: TCP- reliable, connection-based, ordered byte stream
+- `SOCK_DGRAM`: UDP - unreliable, connectionless datagrams
+- `SOCK_RAW`: Raw network protocol access
+- `SOCK_SEQPACKET`: Reliable, ordered, connection-based datagrams
+
 ### The Address Structure
 
 The `sockaddr_in` structure defines where your server listens:
