@@ -42,13 +42,8 @@ int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 
 **My Servers Domain (Address Families)**
 
-## Our Implementation
+**All Domain(s)** (Address Families):
 
-- `AF_INET`: IPv4 address family
-- `SOCK_STREAM`: TCP (reliable, connection-oriented)
-- `0`: Default protocol (TCP for SOCK_STREAM)
-
-**Extended Domain(s)**(Address Families)
 _what kind of addresses the socket can communicate with_
 
 - `AF_INET`: IPv4 Internet protocols
@@ -56,13 +51,20 @@ _what kind of addresses the socket can communicate with_
 - `AF_UNIX/AF_LOCALLocal`: Local communication (same machine)
 - `AF_PACKETLow`: low-level packet interface
 
-**Extended Types (Socket Types)**
+**Extended Types (Socket Types):**
+
 _Specifies the communication semantics:_
 
 - `SOCK_STREAM`: _TCP_- reliable, connection-based, ordered byte stream
 - `SOCK_DGRAM`: _UDP_ - unreliable, connectionless datagrams
 - `SOCK_RAW`: Raw network protocol access
 - `SOCK_SEQPACKET`: Reliable, ordered, connection-based datagrams
+
+## Our Implementation
+
+- `AF_INET`: IPv4 address family
+- `SOCK_STREAM`: TCP (reliable, connection-oriented)
+- `0`: Default protocol (TCP for SOCK_STREAM)
 
 ### The Address Structure
 
