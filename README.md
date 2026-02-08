@@ -40,7 +40,7 @@ A **socket** is an endpoint for network communication. Think of it as a "phone n
 int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 ```
 
-### All Server Domain(s) _( Address Families )_
+### All Server Domain(s) # ( Address Families )
 
 what kind of **addresses** the socket can communicate with:
 
