@@ -48,14 +48,16 @@ int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 - `SOCK_STREAM`: TCP (reliable, connection-oriented)
 - `0`: Default protocol (TCP for SOCK_STREAM)
 
-**Extended Domain(s) (Address Families)** what kind of addresses the socket can communicate with
+**Extended Domain(s)**(Address Families)
+_what kind of addresses the socket can communicate with_
 
 - `AF_INET`: IPv4 Internet protocols
 - `AF_INET6 IPv6`: IPv6 Internet protocols
-- `AF_UNIX/AF_LOCALLocal`: communication (same machine)
-- `AF_PACKETLow`: level packet interface
+- `AF_UNIX/AF_LOCALLocal`: Local communication (same machine)
+- `AF_PACKETLow`: low-level packet interface
 
 **Extended Types (Socket Types)**
+_Specifies the communication semantics:_
 
 - `SOCK_STREAM`: _TCP_- reliable, connection-based, ordered byte stream
 - `SOCK_DGRAM`: _UDP_ - unreliable, connectionless datagrams
