@@ -1,4 +1,5 @@
 # IPv4 TCP Server Development Guide
+
 ### written and developed by: Tanner Davison
 
 ## Table of Contents
@@ -39,11 +40,13 @@ A **socket** is an endpoint for network communication. Think of it as a "phone n
 int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 ```
 
+**My Servers Domain (Address Families) THIS APP IMPLEMENTATION**
+
 - `AF_INET`: IPv4 address family
 - `SOCK_STREAM`: TCP (reliable, connection-oriented)
 - `0`: Default protocol (TCP for SOCK_STREAM)
 
-**other Domain (Address Families)**
+**More Domain(s) (Address Families)**
 
 - `AF_INET6 IPv6`: Internet protocols
 - `AF_UNIX/AF_LOCALLocal`: communication (same machine)
