@@ -50,7 +50,8 @@ int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 
 **Extended Domain(s) (Address Families)** what kind of addresses the socket can communicate with
 
-- `AF_INET6 IPv6`: Internet protocols
+- `AF_INET`: IPv4 Internet protocols
+- `AF_INET6 IPv6`: IPv6 Internet protocols
 - `AF_UNIX/AF_LOCALLocal`: communication (same machine)
 - `AF_PACKETLow`: level packet interface
 
