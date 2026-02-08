@@ -56,8 +56,8 @@ int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 
 **Extended Types (Socket Types)**
 
-- `SOCK_STREAM`: TCP- reliable, connection-based, ordered byte stream
-- `SOCK_DGRAM`: UDP - unreliable, connectionless datagrams
+- `SOCK_STREAM`: _TCP_- reliable, connection-based, ordered byte stream
+- `SOCK_DGRAM`: _UDP_ - unreliable, connectionless datagrams
 - `SOCK_RAW`: Raw network protocol access
 - `SOCK_SEQPACKET`: Reliable, ordered, connection-based datagrams
 
