@@ -16,7 +16,7 @@
 
 ## Introduction
 
-This guide explains how to build a robust IPv4 TCP server in C++. It covers the fundamental concepts, walks through your current implementation, and provides best practices for production-ready servers.
+This guide explains how to build a robust IPv4 TCP server in C++. It covers the fundamental concepts, walks through my implementation, and provides best practices for production-ready servers.
 
 ### What is a TCP Server?
 
