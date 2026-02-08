@@ -42,7 +42,7 @@ int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 
 ### All Server Domain(s) (address-families)
 
-what kind of **addresses** the socket can communicate with:
+the kind of **addresses** the socket can communicate with:
 
 - `AF_INET`: IPv4 Internet protocols
 - `AF_INET6 IPv6`: IPv6 Internet protocols
